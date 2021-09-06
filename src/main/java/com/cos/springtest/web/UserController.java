@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.cos.springtest.domain.user.User;
 import com.cos.springtest.domain.user.UserRepository;
 import com.cos.springtest.web.dto.JoinReqDto;
-
+import com.cos.springtest.web.dto.LoginReqDto;
 
 @Controller
 public class UserController {
@@ -26,10 +26,26 @@ public class UserController {
 		return "home";
 	}
 	
+	@GetMapping("/loginForm")
+	public String loginForm() {
+		return "/user/loginForm";
+	}
 	
 	@GetMapping("/joinForm")
 	public String joinForm() {
 		return "/user/joinForm";
+	}
+	
+	@PostMapping("/login")
+	public String login(LoginReqDto dto) {
+		User userEntity = userRepository.mLogin(dto.getUsername(), dto.getPassword());
+		
+		if(userEntity == null ) {
+			return "redirect:/loginForm";
+		} else {
+			session.setAttribute("principal", userEntity); 
+			return "redirect:/home";
+		}	
 	}
 	
 	@PostMapping("/join")
